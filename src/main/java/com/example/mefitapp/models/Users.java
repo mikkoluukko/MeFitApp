@@ -1,5 +1,7 @@
 package com.example.mefitapp.models;
 
+import org.hibernate.annotations.ColumnDefault;
+
 import javax.persistence.*;
 
 // Had to name the class Users with S, because User
@@ -19,11 +21,11 @@ public class Users {
     @Column(nullable = false)
     private String last_name;
 
-    @Column(nullable = false)
-    private Boolean isContributor;
+    @Column(columnDefinition = "boolean default false")
+    private Boolean is_contributor;
 
-    @Column(nullable = false)
-    private Boolean isAdmin;
+    @Column(columnDefinition = "boolean default false")
+    private Boolean is_admin;
 
     public Users() {
     }
@@ -60,19 +62,19 @@ public class Users {
         this.last_name = last_name;
     }
 
-    public Boolean getContributor() {
-        return isContributor;
+    public Boolean getIs_contributor() {
+        return is_contributor;
     }
 
-    public void setContributor(Boolean contributor) {
-        isContributor = contributor;
+    public void setIs_contributor(Boolean is_contributor) {
+        this.is_contributor = is_contributor;
     }
 
-    public Boolean getAdmin() {
-        return isAdmin;
+    public Boolean getIs_admin() {
+        return is_admin;
     }
 
-    public void setAdmin(Boolean admin) {
-        isAdmin = admin;
+    public void setIs_admin(Boolean is_admin) {
+        this.is_admin = is_admin;
     }
 }

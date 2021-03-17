@@ -1,4 +1,7 @@
 package com.example.mefitapp.repositories;
 
-public interface ProfileRepository {
+import com.example.mefitapp.models.Profile;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ProfileRepository extends JpaRepository<Profile, Long> {
 }

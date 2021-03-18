@@ -6,7 +6,7 @@ import javax.persistence.*;
 public class Profile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long profile_id;
+    private long id;
 
     @Column(nullable = false)
     private String first_name;
@@ -21,6 +21,9 @@ public class Profile {
     private long height;
 
     @Column
+    private String image_link;
+
+    @Column
     private String medical_conditions;
 
     @Column
@@ -29,12 +32,12 @@ public class Profile {
     public Profile() {
     }
 
-    public long getProfile_id() {
-        return profile_id;
+    public long getId() {
+        return id;
     }
 
-    public void setProfile_id(long profile_id) {
-        this.profile_id = profile_id;
+    public void setId(long profile_id) {
+        this.id = profile_id;
     }
 
     public String getFirst_name() {
@@ -67,6 +70,14 @@ public class Profile {
 
     public void setHeight(long height) {
         this.height = height;
+    }
+
+    public String getImage_link() {
+        return image_link;
+    }
+
+    public void setImage_link(String image_link) {
+        this.image_link = image_link;
     }
 
     public String getMedical_conditions() {

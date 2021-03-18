@@ -24,13 +24,13 @@ public class AppUserController {
         return new ResponseEntity<>(users, status);
     }
 
-    @GetMapping("/{user_id}")
-    public ResponseEntity<AppUser> getUser(@PathVariable Long user_id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<AppUser> getUser(@PathVariable Long id) {
         AppUser returnUser = new AppUser();
         HttpStatus status;
-        if (appUserRepository.existsById(user_id)) {
+        if (appUserRepository.existsById(id)) {
             status = HttpStatus.OK;
-            returnUser = appUserRepository.findById(user_id).get();
+            returnUser = appUserRepository.findById(id).get();
         } else {
             status = HttpStatus.NOT_FOUND;
         }
@@ -44,8 +44,8 @@ public class AppUserController {
         return new ResponseEntity<>(returnUser, status);
     }
 
-    @PutMapping("/{user_id}")
-    public ResponseEntity<AppUser> updateUser(@PathVariable Long user_id, @RequestBody AppUser appUser) {
+    @PatchMapping("/{id}")
+    public ResponseEntity<AppUser> updateUser(@PathVariable Long id, @RequestBody AppUser appUser) {
         AppUser returnUser = new AppUser();
         HttpStatus status;
         /*
@@ -53,7 +53,7 @@ public class AppUserController {
          This is to ensure some level of security, making sure someone
          hasn't done some malicious stuff to our body.
         */
-        if (!user_id.equals(appUser.getUser_id())) {
+        if (!id.equals(appUser.getId())) {
             status = HttpStatus.BAD_REQUEST;
             return new ResponseEntity<>(returnUser,status);
         }
@@ -62,12 +62,12 @@ public class AppUserController {
         return new ResponseEntity<>(returnUser, status);
     }
 
-    @DeleteMapping("/{user_id}")
-    public ResponseEntity<HttpStatus> deleteUser(@PathVariable Long user_id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<HttpStatus> deleteUser(@PathVariable Long id) {
         HttpStatus status;
-        if (appUserRepository.existsById(user_id)) {
+        if (appUserRepository.existsById(id)) {
             status = HttpStatus.OK;
-            appUserRepository.deleteById(user_id);
+            appUserRepository.deleteById(id);
         } else {
             status = HttpStatus.NOT_FOUND;
         }

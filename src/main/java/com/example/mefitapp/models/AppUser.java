@@ -6,7 +6,7 @@ import javax.persistence.*;
 public class AppUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long user_id;
+    private long id;
 
     @Column(nullable = false)
     private String email;
@@ -23,12 +23,12 @@ public class AppUser {
     public AppUser() {
     }
 
-    public long getUser_id() {
-        return user_id;
+    public long getId() {
+        return id;
     }
 
-    public void setUser_id(long user_id) {
-        this.user_id = user_id;
+    public void setId(long user_id) {
+        this.id = user_id;
     }
 
     public String getEmail() {

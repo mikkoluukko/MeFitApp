@@ -42,6 +42,25 @@ public class Workout {
         return null;
     }
 
+    @ManyToMany
+    @JoinTable(
+            name = "profile_workout",
+            joinColumns = {@JoinColumn(name = "profile_id")},
+            inverseJoinColumns = {@JoinColumn(name = "workout_id")}
+    )
+    private List<Profile> profiles;
+
+    @JsonGetter("profiles")
+    public List<String> profilesGetter() {
+        if(profiles != null) {
+            return profiles.stream()
+                    .map(profile -> {
+                        return "/api/v1/profile/" + profile.getId();
+                    }).collect(Collectors.toList());
+        }
+        return null;
+    }
+
     public Workout() {
     }
 

@@ -1,6 +1,10 @@
 package com.example.mefitapp.models;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+
 import javax.persistence.*;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 public class Profile {
@@ -28,6 +32,25 @@ public class Profile {
 
     @Column
     private String disabilities;
+
+    @ManyToMany
+    @JoinTable(
+            name = "profile_workout",
+            joinColumns = {@JoinColumn(name = "workout_id")},
+            inverseJoinColumns = {@JoinColumn(name = "profile_id")}
+    )
+    private List<Workout> workouts;
+
+    @JsonGetter("workouts")
+    public List<String> workoutsGetter() {
+        if(workouts != null) {
+            return workouts.stream()
+                    .map(workout -> {
+                        return "/api/v1/workout/" + workout.getId();
+                    }).collect(Collectors.toList());
+        }
+        return null;
+    }
 
     public Profile() {
     }

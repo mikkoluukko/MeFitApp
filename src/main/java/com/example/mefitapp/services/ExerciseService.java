@@ -17,7 +17,7 @@ public class ExerciseService {
     @Autowired
     private ExerciseSetRepository exerciseSetRepository;
 
-    public List<ExerciseSet> getExerciseSetsForExercise(Long id) {
+    public List<ExerciseSet> getExerciseSetsByExercise(Long id) {
         Exercise returnExercise = exerciseRepository.findById(id).get();
         return exerciseSetRepository.findAllByExercise(returnExercise);
     }

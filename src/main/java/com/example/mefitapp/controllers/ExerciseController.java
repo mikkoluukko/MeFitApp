@@ -45,16 +45,16 @@ public class ExerciseController {
 
     // Get all the sets for an exercise
     @GetMapping("/{id}/sets")
-    public ResponseEntity<List<ExerciseSet>> getExerciseSetsForExercise(@PathVariable Long id) {
-        List<ExerciseSet> exerciseSetsForExercise = new ArrayList<>();
+    public ResponseEntity<List<ExerciseSet>> getExerciseSetsByExercise(@PathVariable Long id) {
+        List<ExerciseSet> exerciseSetsByExercise = new ArrayList<>();
         HttpStatus status;
         if (exerciseRepository.existsById(id)) {
             status = HttpStatus.OK;
-            exerciseSetsForExercise = exerciseService.getExerciseSetsForExercise(id);
+            exerciseSetsByExercise = exerciseService.getExerciseSetsByExercise(id);
         } else {
             status = HttpStatus.NOT_FOUND;
         }
-        return new ResponseEntity<>(exerciseSetsForExercise, status);
+        return new ResponseEntity<>(exerciseSetsByExercise, status);
     }
 
     @PostMapping

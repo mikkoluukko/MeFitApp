@@ -1,12 +1,16 @@
 package com.example.mefitapp.controllers;
 
+import com.example.mefitapp.models.ExerciseSet;
+import com.example.mefitapp.models.Profile;
 import com.example.mefitapp.models.Workout;
 import com.example.mefitapp.repositories.WorkoutRepository;
+import com.example.mefitapp.services.WorkoutService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -16,6 +20,9 @@ public class WorkoutController {
 
     @Autowired
     private WorkoutRepository workoutRepository;
+
+    @Autowired
+    private WorkoutService workoutService;
 
     @GetMapping()
     public ResponseEntity<List<Workout>> getAllWorkouts() {
@@ -35,6 +42,34 @@ public class WorkoutController {
             status = HttpStatus.NOT_FOUND;
         }
         return new ResponseEntity<>(returnWorkout, status);
+    }
+
+    // Get all the sets for a workout
+    @GetMapping("/{id}/sets")
+    public ResponseEntity<List<ExerciseSet>> getExerciseSetsByWorkout(@PathVariable Long id) {
+        List<ExerciseSet> exerciseSetsByWorkout = new ArrayList<>();
+        HttpStatus status;
+        if (workoutRepository.existsById(id)) {
+            status = HttpStatus.OK;
+            exerciseSetsByWorkout = workoutService.getExerciseSetsByWorkout(id);
+        } else {
+            status = HttpStatus.NOT_FOUND;
+        }
+        return new ResponseEntity<>(exerciseSetsByWorkout, status);
+    }
+
+    // Get all the profiles for a workout
+    @GetMapping("/{id}/profiles")
+    public ResponseEntity<List<Profile>> getProfilesByWorkout(@PathVariable Long id) {
+        List<Profile> profilesByWorkout = new ArrayList<>();
+        HttpStatus status;
+        if (workoutRepository.existsById(id)) {
+            status = HttpStatus.OK;
+            profilesByWorkout = workoutService.getProfilesByWorkout(id);
+        } else {
+            status = HttpStatus.NOT_FOUND;
+        }
+        return new ResponseEntity<>(profilesByWorkout, status);
     }
 
     @PostMapping

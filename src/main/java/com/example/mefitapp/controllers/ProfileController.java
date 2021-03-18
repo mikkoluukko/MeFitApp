@@ -1,12 +1,15 @@
 package com.example.mefitapp.controllers;
 
 import com.example.mefitapp.models.Profile;
+import com.example.mefitapp.models.Workout;
 import com.example.mefitapp.repositories.ProfileRepository;
+import com.example.mefitapp.services.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -16,6 +19,9 @@ public class ProfileController {
 
     @Autowired
     private ProfileRepository profileRepository;
+
+    @Autowired
+    private ProfileService profileService;
 
     @GetMapping()
     public ResponseEntity<List<Profile>> getAllProfiles() {
@@ -35,6 +41,20 @@ public class ProfileController {
             status = HttpStatus.NOT_FOUND;
         }
         return new ResponseEntity<>(returnProfile, status);
+    }
+
+    // Get all the workouts for a profile
+    @GetMapping("/{id}/workouts")
+    public ResponseEntity<List<Workout>> getWorkoutsByProfile(@PathVariable Long id) {
+        List<Workout> workoutsByProfile = new ArrayList<>();
+        HttpStatus status;
+        if (profileRepository.existsById(id)) {
+            status = HttpStatus.OK;
+            workoutsByProfile = profileService.getWorkoutsByProfile(id);
+        } else {
+            status = HttpStatus.NOT_FOUND;
+        }
+        return new ResponseEntity<>(workoutsByProfile, status);
     }
 
     @PostMapping

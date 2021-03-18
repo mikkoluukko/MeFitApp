@@ -36,7 +36,7 @@ public class Exercise {
         if (exerciseSets != null) {
             return exerciseSets.stream()
                     .map(exerciseSet -> {
-                        return "/api/v1/sets/" + exerciseSet.getId();
+                        return "/api/v1/set/" + exerciseSet.getId();
                     }).collect(Collectors.toList());
         }
         return null;

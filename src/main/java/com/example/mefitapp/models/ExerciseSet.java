@@ -14,7 +14,6 @@ public class ExerciseSet {
     private long exercise_repetitions;
 
     @ManyToOne
-    @JoinColumn(name = "exercise_id")
     private Exercise exercise;
 
     @JsonGetter("exercise")

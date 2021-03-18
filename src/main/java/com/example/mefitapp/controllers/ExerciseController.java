@@ -1,12 +1,15 @@
 package com.example.mefitapp.controllers;
 
 import com.example.mefitapp.models.Exercise;
+import com.example.mefitapp.models.ExerciseSet;
 import com.example.mefitapp.repositories.ExerciseRepository;
+import com.example.mefitapp.services.ExerciseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -16,6 +19,9 @@ public class ExerciseController {
 
     @Autowired
     private ExerciseRepository exerciseRepository;
+
+    @Autowired
+    private ExerciseService exerciseService;
 
     @GetMapping()
     public ResponseEntity<List<Exercise>> getAllExercises() {
@@ -35,6 +41,20 @@ public class ExerciseController {
             status = HttpStatus.NOT_FOUND;
         }
         return new ResponseEntity<>(returnExercise, status);
+    }
+
+    // Get all the sets for an exercise
+    @GetMapping("/{id}/sets")
+    public ResponseEntity<List<ExerciseSet>> getExerciseSetsForExercise(@PathVariable Long id) {
+        List<ExerciseSet> exerciseSetsForExercise = new ArrayList<>();
+        HttpStatus status;
+        if (exerciseRepository.existsById(id)) {
+            status = HttpStatus.OK;
+            exerciseSetsForExercise = exerciseService.getExerciseSetsForExercise(id);
+        } else {
+            status = HttpStatus.NOT_FOUND;
+        }
+        return new ResponseEntity<>(exerciseSetsForExercise, status);
     }
 
     @PostMapping

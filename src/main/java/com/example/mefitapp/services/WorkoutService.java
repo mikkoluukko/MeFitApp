@@ -1,13 +1,7 @@
 package com.example.mefitapp.services;
 
-import com.example.mefitapp.models.Exercise;
-import com.example.mefitapp.models.ExerciseSet;
-import com.example.mefitapp.models.Profile;
-import com.example.mefitapp.models.Workout;
-import com.example.mefitapp.repositories.ExerciseRepository;
-import com.example.mefitapp.repositories.ExerciseSetRepository;
-import com.example.mefitapp.repositories.ProfileRepository;
-import com.example.mefitapp.repositories.WorkoutRepository;
+import com.example.mefitapp.models.*;
+import com.example.mefitapp.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +18,9 @@ public class WorkoutService {
     @Autowired
     private ProfileRepository profileRepository;
 
+    @Autowired
+    private ProgramRepository programRepository;
+
     public List<ExerciseSet> getExerciseSetsByWorkout(Long id) {
         Workout returnWorkout = workoutRepository.findById(id).get();
         return exerciseSetRepository.findAllByWorkouts(returnWorkout);
@@ -32,5 +29,10 @@ public class WorkoutService {
     public List<Profile> getProfilesByWorkout(Long id) {
         Workout returnWorkout = workoutRepository.findById(id).get();
         return profileRepository.findAllByWorkouts(returnWorkout);
+    }
+
+    public List<Program> getProgramsByWorkout(Long id) {
+        Workout returnWorkout = workoutRepository.findById(id).get();
+        return programRepository.findAllByWorkouts(returnWorkout);
     }
 }

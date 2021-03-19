@@ -2,6 +2,7 @@ package com.example.mefitapp.controllers;
 
 import com.example.mefitapp.models.ExerciseSet;
 import com.example.mefitapp.models.Profile;
+import com.example.mefitapp.models.Program;
 import com.example.mefitapp.models.Workout;
 import com.example.mefitapp.repositories.WorkoutRepository;
 import com.example.mefitapp.services.WorkoutService;
@@ -70,6 +71,20 @@ public class WorkoutController {
             status = HttpStatus.NOT_FOUND;
         }
         return new ResponseEntity<>(profilesByWorkout, status);
+    }
+
+    // Get all the programs for a workout
+    @GetMapping("/{id}/programs")
+    public ResponseEntity<List<Program>> getProgramsByWorkout(@PathVariable Long id) {
+        List<Program> programsByWorkout = new ArrayList<>();
+        HttpStatus status;
+        if (workoutRepository.existsById(id)) {
+            status = HttpStatus.OK;
+            programsByWorkout = workoutService.getProgramsByWorkout(id);
+        } else {
+            status = HttpStatus.NOT_FOUND;
+        }
+        return new ResponseEntity<>(programsByWorkout, status);
     }
 
     @PostMapping

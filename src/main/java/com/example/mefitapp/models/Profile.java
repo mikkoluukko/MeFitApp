@@ -65,6 +65,25 @@ public class Profile {
         return null;
     }
 
+    @ManyToMany
+    @JoinTable(
+            name = "profile_program",
+            joinColumns = {@JoinColumn(name = "program_id")},
+            inverseJoinColumns = {@JoinColumn(name = "profile_id")}
+    )
+    private List<Program> programs;
+
+    @JsonGetter("programs")
+    public List<String> programsGetter() {
+        if(programs != null) {
+            return programs.stream()
+                    .map(program -> {
+                        return "/api/v1/program/" + program.getId();
+                    }).collect(Collectors.toList());
+        }
+        return null;
+    }
+
     public Profile() {
     }
 
@@ -154,5 +173,13 @@ public class Profile {
 
     public void setWorkouts(List<Workout> workouts) {
         this.workouts = workouts;
+    }
+
+    public List<Program> getPrograms() {
+        return programs;
+    }
+
+    public void setPrograms(List<Program> programs) {
+        this.programs = programs;
     }
 }

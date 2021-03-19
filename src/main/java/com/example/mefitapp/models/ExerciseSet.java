@@ -47,6 +47,14 @@ public class ExerciseSet {
         return null;
     }
 
+    public ExerciseSet() {
+    }
+
+    public ExerciseSet(long exercise_repetitions, Exercise exercise) {
+        this.exercise_repetitions = exercise_repetitions;
+        this.exercise = exercise;
+    }
+
     public long getId() {
         return id;
     }

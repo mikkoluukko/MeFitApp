@@ -1,6 +1,7 @@
 package com.example.mefitapp.models;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
+import com.sun.istack.NotNull;
 
 import javax.persistence.*;
 import java.util.List;
@@ -33,6 +34,18 @@ public class Profile {
     @Column
     private String disabilities;
 
+    @OneToOne
+    @JoinColumn(name = "profile_id")
+    private AppUser app_user;
+
+    @JsonGetter("app_user")
+    public String userGetter() {
+        if(app_user != null) {
+            return "/api/v1/users/" + app_user.getId();
+        }
+        return null;
+    }
+
     @ManyToMany
     @JoinTable(
             name = "profile_workout",
@@ -53,6 +66,14 @@ public class Profile {
     }
 
     public Profile() {
+    }
+
+    public Profile(String first_name, String last_name, long weight, long Height, AppUser app_user) {
+        this.first_name = first_name;
+        this.last_name = last_name;
+        this.weight = weight;
+        this.height = height;
+        this.app_user = app_user;
     }
 
     public long getId() {
@@ -117,5 +138,21 @@ public class Profile {
 
     public void setDisabilities(String disabilities) {
         this.disabilities = disabilities;
+    }
+
+    public AppUser getApp_user() {
+        return app_user;
+    }
+
+    public void setApp_user(AppUser app_user) {
+        this.app_user = app_user;
+    }
+
+    public List<Workout> getWorkouts() {
+        return workouts;
+    }
+
+    public void setWorkouts(List<Workout> workouts) {
+        this.workouts = workouts;
     }
 }

@@ -1,6 +1,10 @@
 package com.example.mefitapp.models;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+
 import javax.persistence.*;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 public class AppUser {
@@ -20,7 +24,26 @@ public class AppUser {
     @Column(columnDefinition = "boolean default false")
     private Boolean is_admin;
 
+    @OneToOne(mappedBy = "app_user")
+    private Profile profile;
+
+    @JsonGetter("profile")
+    public String profileGetter() {
+        if(profile != null) {
+            return "/api/v1/profiles/" + profile.getId();
+        }
+        return null;
+    }
+
     public AppUser() {
+    }
+
+    // Used in DatabaseSeeder
+    public AppUser(String email, String password, Boolean is_contributor, Boolean is_admin) {
+        this.email = email;
+        this.password = password;
+        this.is_contributor = is_contributor;
+        this.is_admin = is_admin;
     }
 
     public long getId() {
@@ -61,5 +84,13 @@ public class AppUser {
 
     public void setIs_admin(Boolean is_admin) {
         this.is_admin = is_admin;
+    }
+
+    public Profile getProfile() {
+        return profile;
+    }
+
+    public void setProfile(Profile profile) {
+        this.profile = profile;
     }
 }

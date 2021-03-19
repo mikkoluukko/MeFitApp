@@ -59,7 +59,7 @@ public class Profile {
         if(workouts != null) {
             return workouts.stream()
                     .map(workout -> {
-                        return "/api/v1/workout/" + workout.getId();
+                        return "/api/v1/workouts/" + workout.getId();
                     }).collect(Collectors.toList());
         }
         return null;
@@ -78,7 +78,26 @@ public class Profile {
         if(programs != null) {
             return programs.stream()
                     .map(program -> {
-                        return "/api/v1/program/" + program.getId();
+                        return "/api/v1/programs/" + program.getId();
+                    }).collect(Collectors.toList());
+        }
+        return null;
+    }
+
+    @ManyToMany
+    @JoinTable(
+            name = "profile_goal",
+            joinColumns = {@JoinColumn(name = "goal_id")},
+            inverseJoinColumns = {@JoinColumn(name = "profile_id")}
+    )
+    private List<Goal> goals;
+
+    @JsonGetter("goals")
+    public List<String> goalsGetter() {
+        if(goals != null) {
+            return goals.stream()
+                    .map(goal -> {
+                        return "/api/v1/goals/" + goal.getId();
                     }).collect(Collectors.toList());
         }
         return null;

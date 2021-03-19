@@ -1,9 +1,6 @@
 package com.example.mefitapp.controllers;
 
-import com.example.mefitapp.models.ExerciseSet;
-import com.example.mefitapp.models.Profile;
-import com.example.mefitapp.models.Program;
-import com.example.mefitapp.models.Workout;
+import com.example.mefitapp.models.*;
 import com.example.mefitapp.repositories.WorkoutRepository;
 import com.example.mefitapp.services.WorkoutService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,6 +84,20 @@ public class WorkoutController {
         return new ResponseEntity<>(programsByWorkout, status);
     }
 
+    // Get all the goals for a workout
+    @GetMapping("/{id}/goals")
+    public ResponseEntity<List<Goal>> getGoalsByWorkout(@PathVariable Long id) {
+        List<Goal> goalsByWorkout = new ArrayList<>();
+        HttpStatus status;
+        if (workoutRepository.existsById(id)) {
+            status = HttpStatus.OK;
+            goalsByWorkout = workoutService.getGoalsByWorkout(id);
+        } else {
+            status = HttpStatus.NOT_FOUND;
+        }
+        return new ResponseEntity<>(goalsByWorkout, status);
+    }
+
     @PostMapping
     public ResponseEntity<Workout> addWorkout(@RequestBody Workout workout) {
         Workout returnWorkout = workoutRepository.save(workout);
@@ -123,6 +134,4 @@ public class WorkoutController {
         }
         return new ResponseEntity<>(status);
     }
-
-
 }

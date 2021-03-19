@@ -1,5 +1,6 @@
 package com.example.mefitapp.controllers;
 
+import com.example.mefitapp.models.Goal;
 import com.example.mefitapp.models.Profile;
 import com.example.mefitapp.models.Program;
 import com.example.mefitapp.models.Workout;
@@ -70,6 +71,20 @@ public class ProgramController {
             status = HttpStatus.NOT_FOUND;
         }
         return new ResponseEntity<>(profilesByProgram, status);
+    }
+
+    // Get all the goals for a program
+    @GetMapping("/{id}/goals")
+    public ResponseEntity<List<Goal>> getGoalsByProgram(@PathVariable Long id) {
+        List<Goal> goalsByProgram = new ArrayList<>();
+        HttpStatus status;
+        if (programRepository.existsById(id)) {
+            status = HttpStatus.OK;
+            goalsByProgram = programService.getGoalsByProgram(id);
+        } else {
+            status = HttpStatus.NOT_FOUND;
+        }
+        return new ResponseEntity<>(goalsByProgram, status);
     }
 
     @PostMapping

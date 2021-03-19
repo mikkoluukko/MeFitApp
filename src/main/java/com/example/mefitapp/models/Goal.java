@@ -3,26 +3,27 @@ package com.example.mefitapp.models;
 import com.fasterxml.jackson.annotation.JsonGetter;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Entity
-public class Program {
+public class Goal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(nullable = false)
-    private String name;
+    private Date end_date;
 
-    @Column
-    private String category;
+    @Column(columnDefinition = "boolean default false")
+    private Boolean is_achieved;
 
     @ManyToMany
     @JoinTable(
-            name = "program_workout",
+            name = "goal_workout",
             joinColumns = {@JoinColumn(name = "workout_id")},
-            inverseJoinColumns = {@JoinColumn(name = "program_id")}
+            inverseJoinColumns = {@JoinColumn(name = "goal_id")}
     )
     private List<Workout> workouts;
 
@@ -39,9 +40,9 @@ public class Program {
 
     @ManyToMany
     @JoinTable(
-            name = "profile_program",
+            name = "profile_goal",
             joinColumns = {@JoinColumn(name = "profile_id")},
-            inverseJoinColumns = {@JoinColumn(name = "program_id")}
+            inverseJoinColumns = {@JoinColumn(name = "goal_id")}
     )
     private List<Profile> profiles;
 
@@ -50,7 +51,7 @@ public class Program {
         if(profiles != null) {
             return profiles.stream()
                     .map(profile -> {
-                        return "/api/v1/profiles/" + profile.getId();
+                        return "/api/v1/profile/" + profile.getId();
                     }).collect(Collectors.toList());
         }
         return null;
@@ -59,23 +60,23 @@ public class Program {
     @ManyToMany
     @JoinTable(
             name = "program_goal",
-            joinColumns = {@JoinColumn(name = "goal_id")},
-            inverseJoinColumns = {@JoinColumn(name = "program_id")}
+            joinColumns = {@JoinColumn(name = "program_id")},
+            inverseJoinColumns = {@JoinColumn(name = "goal_id")}
     )
-    private List<Goal> goals;
+    private List<Program> programs;
 
-    @JsonGetter("goals")
-    public List<String> goalsGetter() {
-        if(goals != null) {
-            return goals.stream()
-                    .map(goal -> {
-                        return "/api/v1/goals/" + goal.getId();
+    @JsonGetter("programs")
+    public List<String> programsGetter() {
+        if(programs != null) {
+            return programs.stream()
+                    .map(program -> {
+                        return "/api/v1/program/" + program.getId();
                     }).collect(Collectors.toList());
         }
         return null;
     }
 
-    public Program() {
+    public Goal() {
     }
 
     public long getId() {
@@ -86,20 +87,20 @@ public class Program {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public Date getEnd_date() {
+        return end_date;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setEnd_date(Date end_date) {
+        this.end_date = end_date;
     }
 
-    public String getCategory() {
-        return category;
+    public Boolean getIs_achieved() {
+        return is_achieved;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setIs_achieved(Boolean is_achieved) {
+        this.is_achieved = is_achieved;
     }
 
     public List<Workout> getWorkouts() {
@@ -116,5 +117,13 @@ public class Program {
 
     public void setProfiles(List<Profile> profiles) {
         this.profiles = profiles;
+    }
+
+    public List<Program> getPrograms() {
+        return programs;
+    }
+
+    public void setPrograms(List<Program> programs) {
+        this.programs = programs;
     }
 }

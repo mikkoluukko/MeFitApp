@@ -1,10 +1,10 @@
 package com.example.mefitapp.services;
 
-import com.example.mefitapp.models.ExerciseSet;
+import com.example.mefitapp.models.Goal;
 import com.example.mefitapp.models.Profile;
 import com.example.mefitapp.models.Program;
 import com.example.mefitapp.models.Workout;
-import com.example.mefitapp.repositories.ExerciseSetRepository;
+import com.example.mefitapp.repositories.GoalRepository;
 import com.example.mefitapp.repositories.ProfileRepository;
 import com.example.mefitapp.repositories.ProgramRepository;
 import com.example.mefitapp.repositories.WorkoutRepository;
@@ -24,6 +24,9 @@ public class ProgramService {
     @Autowired
     private ProfileRepository profileRepository;
 
+    @Autowired
+    private GoalRepository goalRepository;
+
     public List<Profile> getProfilesByProgram(Long id) {
         Program returnProgram = programRepository.findById(id).get();
         return profileRepository.findAllByPrograms(returnProgram);
@@ -32,5 +35,10 @@ public class ProgramService {
     public List<Workout> getWorkoutsByProgram(Long id) {
         Program returnProgram = programRepository.findById(id).get();
         return workoutRepository.findAllByPrograms(returnProgram);
+    }
+
+    public List<Goal> getGoalsByProgram(Long id) {
+        Program returnProgram = programRepository.findById(id).get();
+        return goalRepository.findAllByPrograms(returnProgram);
     }
 }

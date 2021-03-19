@@ -22,7 +22,7 @@ public class ExerciseSet {
     @JsonGetter("exercise")
     public String exerciseGetter() {
         if (exercise != null) {
-            return "/api/v1/exercise/" + exercise.getId();
+            return "/api/v1/exercises/" + exercise.getId();
         } else {
             return null;
         }
@@ -41,7 +41,7 @@ public class ExerciseSet {
         if(workouts != null) {
             return workouts.stream()
                     .map(workout -> {
-                        return "/api/v1/workout/" + workout.getId();
+                        return "/api/v1/workouts/" + workout.getId();
                     }).collect(Collectors.toList());
         }
         return null;

@@ -21,6 +21,9 @@ public class WorkoutService {
     @Autowired
     private ProgramRepository programRepository;
 
+    @Autowired
+    private GoalRepository goalRepository;
+
     public List<ExerciseSet> getExerciseSetsByWorkout(Long id) {
         Workout returnWorkout = workoutRepository.findById(id).get();
         return exerciseSetRepository.findAllByWorkouts(returnWorkout);
@@ -34,5 +37,10 @@ public class WorkoutService {
     public List<Program> getProgramsByWorkout(Long id) {
         Workout returnWorkout = workoutRepository.findById(id).get();
         return programRepository.findAllByWorkouts(returnWorkout);
+    }
+
+    public List<Goal> getGoalsByWorkout(Long id) {
+        Workout returnWorkout = workoutRepository.findById(id).get();
+        return goalRepository.findAllByWorkouts(returnWorkout);
     }
 }

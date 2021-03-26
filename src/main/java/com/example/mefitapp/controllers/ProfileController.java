@@ -33,7 +33,7 @@ public class ProfileController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Profile> getProfile(@PathVariable Long id) {
+    public ResponseEntity<Profile> getProfile(@PathVariable String id) {
         Profile returnProfile = new Profile();
         HttpStatus status;
         if (profileRepository.existsById(id)) {
@@ -47,7 +47,7 @@ public class ProfileController {
 
     // Get all the workouts for a profile
     @GetMapping("/{id}/workouts")
-    public ResponseEntity<List<Workout>> getWorkoutsByProfile(@PathVariable Long id) {
+    public ResponseEntity<List<Workout>> getWorkoutsByProfile(@PathVariable String id) {
         List<Workout> workoutsByProfile = new ArrayList<>();
         HttpStatus status;
         if (profileRepository.existsById(id)) {
@@ -61,7 +61,7 @@ public class ProfileController {
 
     // Get all the programs for a profile
     @GetMapping("/{id}/programs")
-    public ResponseEntity<List<Program>> getProgramsByProfile(@PathVariable Long id) {
+    public ResponseEntity<List<Program>> getProgramsByProfile(@PathVariable String id) {
         List<Program> programsByProfile = new ArrayList<>();
         HttpStatus status;
         if (profileRepository.existsById(id)) {
@@ -75,7 +75,7 @@ public class ProfileController {
 
     // Get all the goals for a profile
     @GetMapping("/{id}/goals")
-    public ResponseEntity<List<Goal>> getGoalsByProfile(@PathVariable Long id) {
+    public ResponseEntity<List<Goal>> getGoalsByProfile(@PathVariable String id) {
         List<Goal> goalsByProfile = new ArrayList<>();
         HttpStatus status;
         if (profileRepository.existsById(id)) {
@@ -95,7 +95,7 @@ public class ProfileController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Profile> updateProfile(@PathVariable Long id, @RequestBody Profile profile) {
+    public ResponseEntity<Profile> updateProfile(@PathVariable String id, @RequestBody Profile profile) {
         Profile returnProfile = new Profile();
         HttpStatus status;
         /*
@@ -113,7 +113,7 @@ public class ProfileController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> deleteProfile(@PathVariable Long id) {
+    public ResponseEntity<HttpStatus> deleteProfile(@PathVariable String id) {
         HttpStatus status;
         if (profileRepository.existsById(id)) {
             status = HttpStatus.OK;

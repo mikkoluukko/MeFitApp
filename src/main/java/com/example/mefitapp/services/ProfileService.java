@@ -27,17 +27,17 @@ public class ProfileService {
     @Autowired
     private GoalRepository goalRepository;
 
-    public List<Workout> getWorkoutsByProfile(Long id) {
+    public List<Workout> getWorkoutsByProfile(String id) {
         Profile returnProfile = profileRepository.findById(id).get();
         return workoutRepository.findAllByProfiles(returnProfile);
     }
 
-    public List<Program> getProgramsByProfile(Long id) {
+    public List<Program> getProgramsByProfile(String id) {
         Profile returnProfile = profileRepository.findById(id).get();
         return programRepository.findAllByProfiles(returnProfile);
     }
 
-    public List<Goal> getGoalsByProfile(Long id) {
+    public List<Goal> getGoalsByProfile(String id) {
         Profile returnProfile = profileRepository.findById(id).get();
         return goalRepository.findAllByProfiles(returnProfile);
     }

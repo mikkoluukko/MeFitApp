@@ -1,7 +1,6 @@
 package com.example.mefitapp.models;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
-import com.sun.istack.NotNull;
 
 import javax.persistence.*;
 import java.util.List;
@@ -10,14 +9,10 @@ import java.util.stream.Collectors;
 @Entity
 public class Profile {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private String id;
 
-    @Column(nullable = false)
-    private String first_name;
-
-    @Column(nullable = false)
-    private String last_name;
+//    @Column(nullable = false)
+//    private String user_id;
 
     @Column
     private long weight;
@@ -33,18 +28,6 @@ public class Profile {
 
     @Column
     private String disabilities;
-
-    @OneToOne
-    @JoinColumn(name = "profile_id")
-    private AppUser app_user;
-
-    @JsonGetter("app_user")
-    public String userGetter() {
-        if(app_user != null) {
-            return "/api/v1/users/" + app_user.getId();
-        }
-        return null;
-    }
 
     @ManyToMany
     @JoinTable(
@@ -106,36 +89,12 @@ public class Profile {
     public Profile() {
     }
 
-    public Profile(String first_name, String last_name, long weight, long Height, AppUser app_user) {
-        this.first_name = first_name;
-        this.last_name = last_name;
-        this.weight = weight;
-        this.height = height;
-        this.app_user = app_user;
-    }
-
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long profile_id) {
+    public void setId(String profile_id) {
         this.id = profile_id;
-    }
-
-    public String getFirst_name() {
-        return first_name;
-    }
-
-    public void setFirst_name(String first_name) {
-        this.first_name = first_name;
-    }
-
-    public String getLast_name() {
-        return last_name;
-    }
-
-    public void setLast_name(String last_name) {
-        this.last_name = last_name;
     }
 
     public long getWeight() {
@@ -178,14 +137,6 @@ public class Profile {
         this.disabilities = disabilities;
     }
 
-    public AppUser getApp_user() {
-        return app_user;
-    }
-
-    public void setApp_user(AppUser app_user) {
-        this.app_user = app_user;
-    }
-
     public List<Workout> getWorkouts() {
         return workouts;
     }
@@ -200,5 +151,13 @@ public class Profile {
 
     public void setPrograms(List<Program> programs) {
         this.programs = programs;
+    }
+
+    public List<Goal> getGoals() {
+        return goals;
+    }
+
+    public void setGoals(List<Goal> goals) {
+        this.goals = goals;
     }
 }

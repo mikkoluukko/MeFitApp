@@ -9,10 +9,13 @@ import com.example.mefitapp.services.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -95,20 +98,24 @@ public class ProfileController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Profile> updateProfile(@PathVariable String id, @RequestBody Profile profile) {
+    public ResponseEntity<Profile> updateProfile(@PathVariable String id, @RequestBody Map<String, Object> updates) {
         Profile returnProfile = new Profile();
         HttpStatus status;
-        /*
-         We want to check if the request body matches what we see in the path variable.
-         This is to ensure some level of security, making sure someone
-         hasn't done some malicious stuff to our body.
-        */
-        if (!id.equals(profile.getId())) {
-            status = HttpStatus.BAD_REQUEST;
-            return new ResponseEntity<>(returnProfile,status);
+        if (profileRepository.existsById(id)) {
+            status = HttpStatus.OK;
+            Profile toBePatchedProfile = profileRepository.findById(id).get();
+            // Map key is field name, v is value
+            updates.forEach((k, v) -> {
+                // use reflection to get field k on exercise and set it to value v
+                Field field = ReflectionUtils.findField(Profile.class, k);
+                field.setAccessible(true);
+                ReflectionUtils.setField(field, toBePatchedProfile, v);
+            });
+            profileRepository.save(toBePatchedProfile);
+            returnProfile = toBePatchedProfile;
+        } else {
+            status = HttpStatus.NOT_FOUND;
         }
-        returnProfile = profileRepository.save(profile);
-        status = HttpStatus.NO_CONTENT;
         return new ResponseEntity<>(returnProfile, status);
     }
 

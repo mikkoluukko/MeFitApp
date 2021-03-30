@@ -4,10 +4,12 @@ import com.example.mefitapp.models.Exercise;
 import com.example.mefitapp.models.ExerciseSet;
 import com.example.mefitapp.repositories.ExerciseRepository;
 import com.example.mefitapp.repositories.ExerciseSetRepository;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ExerciseService {

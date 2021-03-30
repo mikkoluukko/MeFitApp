@@ -4,13 +4,17 @@ import com.example.mefitapp.models.Exercise;
 import com.example.mefitapp.models.ExerciseSet;
 import com.example.mefitapp.repositories.ExerciseRepository;
 import com.example.mefitapp.services.ExerciseService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -22,6 +26,9 @@ public class ExerciseController {
 
     @Autowired
     private ExerciseService exerciseService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @GetMapping()
     public ResponseEntity<List<Exercise>> getAllExercises() {
@@ -65,20 +72,24 @@ public class ExerciseController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Exercise> updateExercise(@PathVariable Long id, @RequestBody Exercise exercise) {
+    public ResponseEntity<Exercise> updateExercise(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
         Exercise returnExercise = new Exercise();
         HttpStatus status;
-        /*
-         We want to check if the request body matches what we see in the path variable.
-         This is to ensure some level of security, making sure someone
-         hasn't done some malicious stuff to our body.
-        */
-        if (!id.equals(exercise.getId())) {
-            status = HttpStatus.BAD_REQUEST;
-            return new ResponseEntity<>(returnExercise,status);
+        if (exerciseRepository.existsById(id)) {
+            status = HttpStatus.OK;
+            Exercise toBePatchedExercise = exerciseRepository.findById(id).get();
+            // Map key is field name, v is value
+            updates.forEach((k, v) -> {
+                // use reflection to get field k on exercise and set it to value v
+                Field field = ReflectionUtils.findField(Exercise.class, k);
+                field.setAccessible(true);
+                ReflectionUtils.setField(field, toBePatchedExercise, v);
+            });
+            exerciseRepository.save(toBePatchedExercise);
+            returnExercise = toBePatchedExercise;
+        } else {
+            status = HttpStatus.NOT_FOUND;
         }
-        returnExercise = exerciseRepository.save(exercise);
-        status = HttpStatus.NO_CONTENT;
         return new ResponseEntity<>(returnExercise, status);
     }
 

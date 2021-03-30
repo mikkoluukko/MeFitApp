@@ -1,5 +1,6 @@
 package com.example.mefitapp.controllers;
 
+import com.example.mefitapp.models.Exercise;
 import com.example.mefitapp.models.ExerciseSet;
 import com.example.mefitapp.models.Workout;
 import com.example.mefitapp.repositories.ExerciseSetRepository;
@@ -7,10 +8,13 @@ import com.example.mefitapp.services.ExerciseSetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -65,20 +69,24 @@ public class ExerciseSetController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<ExerciseSet> updateExerciseSet(@PathVariable Long id, @RequestBody ExerciseSet exerciseSet) {
+    public ResponseEntity<ExerciseSet> updateExerciseSet(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
         ExerciseSet returnExerciseSet = new ExerciseSet();
         HttpStatus status;
-        /*
-         We want to check if the request body matches what we see in the path variable.
-         This is to ensure some level of security, making sure someone
-         hasn't done some malicious stuff to our body.
-        */
-        if (!id.equals(exerciseSet.getId())) {
-            status = HttpStatus.BAD_REQUEST;
-            return new ResponseEntity<>(returnExerciseSet, status);
+        if (exerciseSetRepository.existsById(id)) {
+            status = HttpStatus.OK;
+            ExerciseSet toBePatchedExerciseSet = exerciseSetRepository.findById(id).get();
+            // Map key is field name, v is value
+            updates.forEach((k, v) -> {
+                // use reflection to get field k on exercise and set it to value v
+                Field field = ReflectionUtils.findField(ExerciseSet.class, k);
+                field.setAccessible(true);
+                ReflectionUtils.setField(field, toBePatchedExerciseSet, v);
+            });
+            exerciseSetRepository.save(toBePatchedExerciseSet);
+            returnExerciseSet = toBePatchedExerciseSet;
+        } else {
+            status = HttpStatus.NOT_FOUND;
         }
-        returnExerciseSet = exerciseSetRepository.save(exerciseSet);
-        status = HttpStatus.NO_CONTENT;
         return new ResponseEntity<>(returnExerciseSet, status);
     }
 

@@ -8,10 +8,13 @@ import com.example.mefitapp.services.WorkoutService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -94,20 +97,24 @@ public class GoalController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Goal> updateGoal(@PathVariable Long id, @RequestBody Goal goal) {
+    public ResponseEntity<Goal> updateGoal(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
         Goal returnGoal = new Goal();
         HttpStatus status;
-        /*
-         We want to check if the request body matches what we see in the path variable.
-         This is to ensure some level of security, making sure someone
-         hasn't done some malicious stuff to our body.
-        */
-        if (!id.equals(goal.getId())) {
-            status = HttpStatus.BAD_REQUEST;
-            return new ResponseEntity<>(returnGoal, status);
+        if (goalRepository.existsById(id)) {
+            status = HttpStatus.OK;
+            Goal toBePatchedGoal = goalRepository.findById(id).get();
+            // Map key is field name, v is value
+            updates.forEach((k, v) -> {
+                // use reflection to get field k on exercise and set it to value v
+                Field field = ReflectionUtils.findField(Goal.class, k);
+                field.setAccessible(true);
+                ReflectionUtils.setField(field, toBePatchedGoal, v);
+            });
+            goalRepository.save(toBePatchedGoal);
+            returnGoal = toBePatchedGoal;
+        } else {
+            status = HttpStatus.NOT_FOUND;
         }
-        returnGoal = goalRepository.save(goal);
-        status = HttpStatus.NO_CONTENT;
         return new ResponseEntity<>(returnGoal, status);
     }
 

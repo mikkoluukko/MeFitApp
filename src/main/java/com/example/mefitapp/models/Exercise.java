@@ -29,7 +29,7 @@ public class Exercise {
 
     @OneToMany
     @JoinColumn(name = "exercise_id")
-    List<ExerciseSet> exerciseSets;
+    private List<ExerciseSet> exerciseSets;
 
     @JsonGetter("exerciseSets")
     public List<String> exerciseSetsGetter() {

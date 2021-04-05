@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 public class ExerciseSet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    public long id;
 
     @Column(nullable = false)
     private long exercise_repetitions;

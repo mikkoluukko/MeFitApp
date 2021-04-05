@@ -1,13 +1,14 @@
 package com.example.mefitapp.controllers;
 
-import com.example.mefitapp.models.Exercise;
 import com.example.mefitapp.models.ExerciseSet;
 import com.example.mefitapp.models.Workout;
 import com.example.mefitapp.repositories.ExerciseSetRepository;
 import com.example.mefitapp.services.ExerciseSetService;
+import com.example.mefitapp.services.SecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,6 +27,9 @@ public class ExerciseSetController {
 
     @Autowired
     private ExerciseSetService exerciseSetService;
+
+    @Autowired
+    private SecurityService securityService;
 
     @GetMapping()
     public ResponseEntity<List<ExerciseSet>> getAllExerciseSets() {
@@ -48,7 +52,7 @@ public class ExerciseSetController {
     }
 
     // Get all the workouts for a set
-    @GetMapping("/{id}/sets")
+    @GetMapping("/{id}/workouts")
     public ResponseEntity<List<Workout>> getWorkoutsByExerciseSet(@PathVariable Long id) {
         List<Workout> workoutsByExerciseSets = new ArrayList<>();
         HttpStatus status;
@@ -62,42 +66,60 @@ public class ExerciseSetController {
     }
 
     @PostMapping
-    public ResponseEntity<ExerciseSet> addExerciseSet(@RequestBody ExerciseSet exerciseSet) {
-        ExerciseSet returnExercise = exerciseSetRepository.save(exerciseSet);
-        HttpStatus status = HttpStatus.CREATED;
-        return new ResponseEntity<>(returnExercise, status);
+    public ResponseEntity<ExerciseSet> addExerciseSet(@RequestBody ExerciseSet exerciseSet,
+            Authentication authentication) {
+        if (securityService.isContributor(authentication)) {
+            ExerciseSet returnExercise = exerciseSetRepository.save(exerciseSet);
+            HttpStatus status = HttpStatus.CREATED;
+            return new ResponseEntity<>(returnExercise, status);
+        } else {
+            HttpStatus status = HttpStatus.UNAUTHORIZED;
+            return new ResponseEntity<>(status);
+        }
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<ExerciseSet> updateExerciseSet(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
+    public ResponseEntity<ExerciseSet> updateExerciseSet(@PathVariable Long id,
+            @RequestBody Map<String, Object> updates, Authentication authentication) {
         ExerciseSet returnExerciseSet = new ExerciseSet();
         HttpStatus status;
-        if (exerciseSetRepository.existsById(id)) {
-            status = HttpStatus.OK;
-            ExerciseSet toBePatchedExerciseSet = exerciseSetRepository.findById(id).get();
-            // Map key is field name, v is value
-            updates.forEach((k, v) -> {
-                // use reflection to get field k on exercise and set it to value v
-                Field field = ReflectionUtils.findField(ExerciseSet.class, k);
-                field.setAccessible(true);
-                ReflectionUtils.setField(field, toBePatchedExerciseSet, v);
-            });
-            exerciseSetRepository.save(toBePatchedExerciseSet);
-            returnExerciseSet = toBePatchedExerciseSet;
+        if (securityService.isContributor(authentication)) {
+            if (exerciseSetRepository.existsById(id)) {
+                status = HttpStatus.OK;
+                ExerciseSet toBePatchedExerciseSet = exerciseSetRepository.findById(id).get();
+                // Map key is field name, v is value
+                updates.forEach((k, v) -> {
+                    // use reflection to get field k on exercise and set it to value v
+                    Field field = ReflectionUtils.findField(ExerciseSet.class, k);
+                    System.out.println(field.getName());
+                    System.out.println(k);
+                    field.setAccessible(true);
+                    ReflectionUtils.setField(field, toBePatchedExerciseSet, v);
+                });
+                exerciseSetRepository.save(toBePatchedExerciseSet);
+                returnExerciseSet = toBePatchedExerciseSet;
+            } else {
+                status = HttpStatus.NOT_FOUND;
+            }
+            return new ResponseEntity<>(returnExerciseSet, status);
         } else {
-            status = HttpStatus.NOT_FOUND;
+            status = HttpStatus.UNAUTHORIZED;
+            return new ResponseEntity<>(status);
         }
-        return new ResponseEntity<>(returnExerciseSet, status);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> deleteExerciseSet(@PathVariable Long id) {
+    public ResponseEntity<HttpStatus> deleteExerciseSet(@PathVariable Long id, Authentication authentication) {
         HttpStatus status;
-        if (exerciseSetRepository.existsById(id)) {
-            status = HttpStatus.OK;
-            exerciseSetRepository.deleteById(id);
+        if (securityService.isAdmin(authentication)) {
+            if (exerciseSetRepository.existsById(id)) {
+                status = HttpStatus.OK;
+                exerciseSetRepository.deleteById(id);
+            } else {
+                status = HttpStatus.NOT_FOUND;
+            }
         } else {
-            status = HttpStatus.NOT_FOUND;
+            status = HttpStatus.UNAUTHORIZED;
         }
         return new ResponseEntity<>(status);
     }

@@ -49,8 +49,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                  https://stackoverflow.com/questions/55609083/how-to-set-user-authorities-from-user-claims-return-by-an-oauth-server-in-spring/56259665
                  For now, we replaced our scope with our roles: https://stackoverflow.com/questions/58205510/spring-security-mapping-oauth2-claims-with-roles-to-secure-resource-server-endp/58234971#58234971
                 */
-                .antMatchers("/api/v1/*").hasRole("User")
-//                .antMatchers("/api/resources/admin").hasRole("Administrator")
+                .antMatchers(HttpMethod.GET,"/api/v1/*").hasAnyRole("User", "Contributor", "Admin")
+                .antMatchers(HttpMethod.POST, "/api/v1/*").hasAnyRole("Contributor", "Admin")
+                .antMatchers(HttpMethod.PATCH, "/api/v1/*").hasAnyRole("Contributor", "Admin")
+                .antMatchers(HttpMethod.DELETE, "/api/v1/*").hasRole("Admin")
                 .anyRequest()
                 .authenticated()
                 .and()

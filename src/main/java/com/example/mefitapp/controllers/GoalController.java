@@ -2,16 +2,17 @@ package com.example.mefitapp.controllers;
 
 import com.example.mefitapp.models.*;
 import com.example.mefitapp.repositories.GoalRepository;
-import com.example.mefitapp.repositories.WorkoutRepository;
 import com.example.mefitapp.services.GoalService;
-import com.example.mefitapp.services.WorkoutService;
+import com.example.mefitapp.services.SecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Field;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -27,20 +28,34 @@ public class GoalController {
     @Autowired
     private GoalService goalService;
 
+    @Autowired
+    private SecurityService securityService;
+
     @GetMapping()
-    public ResponseEntity<List<Goal>> getAllGoals() {
-        List<Goal> goals = goalRepository.findAll();
-        HttpStatus status = HttpStatus.OK;
-        return new ResponseEntity<>(goals, status);
+    public ResponseEntity<List<Goal>> getAllGoals(Authentication authentication) {
+        if (securityService.isAdmin(authentication)) {
+            List<Goal> goals = goalRepository.findAll();
+            HttpStatus status = HttpStatus.OK;
+            return new ResponseEntity<>(goals, status);
+        } else {
+            HttpStatus status = HttpStatus.UNAUTHORIZED;
+            return new ResponseEntity<>(status);
+        }
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Goal> getGoal(@PathVariable Long id) {
+    public ResponseEntity<Goal> getGoal(@PathVariable Long id, Principal principal, Authentication authentication) {
         Goal returnGoal = new Goal();
         HttpStatus status;
         if (goalRepository.existsById(id)) {
-            status = HttpStatus.OK;
-            returnGoal = goalRepository.findById(id).get();
+            String ownerId = goalRepository.findById(id).get().getProfile().getId();
+            if (securityService.isAdmin(authentication) || securityService.isOwner(ownerId, principal)) {
+                status = HttpStatus.OK;
+                returnGoal = goalRepository.findById(id).get();
+            } else {
+                status = HttpStatus.UNAUTHORIZED;
+                return new ResponseEntity<>(status);
+            }
         } else {
             status = HttpStatus.NOT_FOUND;
         }
@@ -49,40 +64,40 @@ public class GoalController {
 
     // Get all the workouts for a goal
     @GetMapping("/{id}/workouts")
-    public ResponseEntity<List<Workout>> getWorkoutsByGoal(@PathVariable Long id) {
+    public ResponseEntity<List<Workout>> getWorkoutsByGoal(
+            @PathVariable Long id, Principal principal, Authentication authentication) {
         List<Workout> workoutsByGoal = new ArrayList<>();
         HttpStatus status;
         if (goalRepository.existsById(id)) {
-            status = HttpStatus.OK;
-            workoutsByGoal = goalService.getWorkoutsByGoal(id);
+            String ownerId = goalRepository.findById(id).get().getProfile().getId();
+            if (securityService.isAdmin(authentication) || securityService.isOwner(ownerId, principal)) {
+                status = HttpStatus.OK;
+                workoutsByGoal = goalService.getWorkoutsByGoal(id);
+            } else {
+                status = HttpStatus.UNAUTHORIZED;
+                return new ResponseEntity<>(status);
+            }
         } else {
             status = HttpStatus.NOT_FOUND;
         }
         return new ResponseEntity<>(workoutsByGoal, status);
     }
 
-    // Get all the profiles for a goal
-    @GetMapping("/{id}/profiles")
-    public ResponseEntity<List<Profile>> getProfilesByGoal(@PathVariable Long id) {
-        List<Profile> profilesByGoal = new ArrayList<>();
-        HttpStatus status;
-        if (goalRepository.existsById(id)) {
-            status = HttpStatus.OK;
-            profilesByGoal = goalService.getProfilesByGoal(id);
-        } else {
-            status = HttpStatus.NOT_FOUND;
-        }
-        return new ResponseEntity<>(profilesByGoal, status);
-    }
-
     // Get all the programs for a goal
     @GetMapping("/{id}/programs")
-    public ResponseEntity<List<Program>> getProgramsByGoal(@PathVariable Long id) {
+    public ResponseEntity<List<Program>> getProgramsByGoal(
+            @PathVariable Long id, Principal principal, Authentication authentication) {
         List<Program> programsByGoal = new ArrayList<>();
         HttpStatus status;
         if (goalRepository.existsById(id)) {
-            status = HttpStatus.OK;
-            programsByGoal = goalService.getProgramsByGoal(id);
+            String ownerId = goalRepository.findById(id).get().getProfile().getId();
+            if (securityService.isAdmin(authentication) || securityService.isOwner(ownerId, principal)) {
+                status = HttpStatus.OK;
+                programsByGoal = goalService.getProgramsByGoal(id);
+            } else {
+                status = HttpStatus.UNAUTHORIZED;
+                return new ResponseEntity<>(status);
+            }
         } else {
             status = HttpStatus.NOT_FOUND;
         }
@@ -97,21 +112,28 @@ public class GoalController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Goal> updateGoal(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
+    public ResponseEntity<Goal> updateGoal(@PathVariable Long id,
+            @RequestBody Map<String, Object> updates, Principal principal, Authentication authentication) {
         Goal returnGoal = new Goal();
         HttpStatus status;
         if (goalRepository.existsById(id)) {
-            status = HttpStatus.OK;
-            Goal toBePatchedGoal = goalRepository.findById(id).get();
-            // Map key is field name, v is value
-            updates.forEach((k, v) -> {
-                // use reflection to get field k on exercise and set it to value v
-                Field field = ReflectionUtils.findField(Goal.class, k);
-                field.setAccessible(true);
-                ReflectionUtils.setField(field, toBePatchedGoal, v);
-            });
-            goalRepository.save(toBePatchedGoal);
-            returnGoal = toBePatchedGoal;
+            String ownerId = goalRepository.findById(id).get().getProfile().getId();
+            if (securityService.isAdmin(authentication) || securityService.isOwner(ownerId, principal)) {
+                status = HttpStatus.OK;
+                Goal toBePatchedGoal = goalRepository.findById(id).get();
+                // Map key is field name, v is value
+                updates.forEach((k, v) -> {
+                    // use reflection to get field k on exercise and set it to value v
+                    Field field = ReflectionUtils.findField(Goal.class, k);
+                    field.setAccessible(true);
+                    ReflectionUtils.setField(field, toBePatchedGoal, v);
+                });
+                goalRepository.save(toBePatchedGoal);
+                returnGoal = toBePatchedGoal;
+            } else {
+                status = HttpStatus.UNAUTHORIZED;
+                return new ResponseEntity<>(status);
+            }
         } else {
             status = HttpStatus.NOT_FOUND;
         }
@@ -119,13 +141,17 @@ public class GoalController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> deleteGoal(@PathVariable Long id) {
+    public ResponseEntity<HttpStatus> deleteGoal(@PathVariable Long id, Authentication authentication) {
         HttpStatus status;
-        if (goalRepository.existsById(id)) {
-            status = HttpStatus.OK;
-            goalRepository.deleteById(id);
+        if (securityService.isAdmin(authentication)) {
+            if (goalRepository.existsById(id)) {
+                status = HttpStatus.OK;
+                goalRepository.deleteById(id);
+            } else {
+                status = HttpStatus.NOT_FOUND;
+            }
         } else {
-            status = HttpStatus.NOT_FOUND;
+            status = HttpStatus.UNAUTHORIZED;
         }
         return new ResponseEntity<>(status);
     }

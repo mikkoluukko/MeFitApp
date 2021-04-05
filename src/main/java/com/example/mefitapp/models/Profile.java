@@ -11,9 +11,6 @@ public class Profile {
     @Id
     private String id;
 
-//    @Column(nullable = false)
-//    private String user_id;
-
     @Column
     private long weight;
 
@@ -67,12 +64,8 @@ public class Profile {
         return null;
     }
 
-    @ManyToMany
-    @JoinTable(
-            name = "profile_goal",
-            joinColumns = {@JoinColumn(name = "goal_id")},
-            inverseJoinColumns = {@JoinColumn(name = "profile_id")}
-    )
+    @OneToMany
+    @JoinColumn(name = "goal_id")
     private List<Goal> goals;
 
     @JsonGetter("goals")

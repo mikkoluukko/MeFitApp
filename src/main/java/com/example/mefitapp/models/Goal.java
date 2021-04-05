@@ -38,23 +38,16 @@ public class Goal {
         return null;
     }
 
-    @ManyToMany
-    @JoinTable(
-            name = "profile_goal",
-            joinColumns = {@JoinColumn(name = "profile_id")},
-            inverseJoinColumns = {@JoinColumn(name = "goal_id")}
-    )
-    private List<Profile> profiles;
+    @ManyToOne
+    private Profile profile;
 
-    @JsonGetter("profiles")
-    public List<String> profilesGetter() {
-        if(profiles != null) {
-            return profiles.stream()
-                    .map(profile -> {
-                        return "/api/v1/profile/" + profile.getId();
-                    }).collect(Collectors.toList());
+    @JsonGetter("profile")
+    public String profileGetter() {
+        if (profile != null) {
+            return "/api/v1/profiles/" + profile.getId();
+        } else {
+            return null;
         }
-        return null;
     }
 
     @ManyToMany
@@ -111,12 +104,12 @@ public class Goal {
         this.workouts = workouts;
     }
 
-    public List<Profile> getProfiles() {
-        return profiles;
+    public Profile getProfile() {
+        return profile;
     }
 
-    public void setProfiles(List<Profile> profiles) {
-        this.profiles = profiles;
+    public void setProfile(Profile profile) {
+        this.profile = profile;
     }
 
     public List<Program> getPrograms() {

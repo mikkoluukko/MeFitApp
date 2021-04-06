@@ -73,7 +73,7 @@ public class ExerciseSetController {
     @PostMapping
     public ResponseEntity<ExerciseSet> addExerciseSet(@RequestBody ExerciseSet exerciseSet,
             Authentication authentication) {
-        if (securityService.isContributor(authentication)) {
+        if (securityService.isContributor(authentication) || securityService.isAdmin(authentication)) {
             ExerciseSet returnExercise = exerciseSetRepository.save(exerciseSet);
             HttpStatus status = HttpStatus.CREATED;
             return new ResponseEntity<>(returnExercise, status);

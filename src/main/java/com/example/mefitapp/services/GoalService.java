@@ -17,10 +17,10 @@ public class GoalService {
     private WorkoutRepository workoutRepository;
 
     @Autowired
-    private ProfileRepository profileRepository;
+    private ProgramRepository programRepository;
 
     @Autowired
-    private ProgramRepository programRepository;
+    private ProfileRepository profileRepository;
 
     public List<Workout> getWorkoutsByGoal(Long id) {
         Goal returnGoal = goalRepository.findById(id).get();
@@ -30,5 +30,34 @@ public class GoalService {
     public List<Program> getProgramsByGoal(Long id) {
         Goal returnGoal = goalRepository.findById(id).get();
         return programRepository.findAllByGoals(returnGoal);
+    }
+
+    public void updateList(Object listName, Long goalId, String itemId) {
+        switch (listName.toString()) {
+            case "workouts" -> updateExerciseSets(goalId, Long.valueOf(itemId));
+            case "programs" -> updatePrograms(goalId, Long.valueOf(itemId));
+            case "profile" -> updateProfile(goalId, itemId);
+        }
+    }
+
+    public void updateExerciseSets(Long goalId, Long workoutId) {
+        Goal toBePatchedGoal = goalRepository.findById(goalId).get();
+        Workout toBeAddedWorkout = workoutRepository.findById(workoutId).get();
+        toBePatchedGoal.getWorkouts().add(toBeAddedWorkout);
+        goalRepository.save(toBePatchedGoal);
+    }
+
+    public void updatePrograms(Long goalId, Long programId) {
+        Goal toBePatchedGoal = goalRepository.findById(goalId).get();
+        Program toBeAddedProgram = programRepository.findById(programId).get();
+        toBePatchedGoal.getPrograms().add(toBeAddedProgram);
+        goalRepository.save(toBePatchedGoal);
+    }
+
+    public void updateProfile(Long goalId, String profileId) {
+        Goal toBePatchedGoal = goalRepository.findById(goalId).get();
+        Profile toBeAddedProfile = profileRepository.findById(profileId).get();
+        toBePatchedGoal.setProfile(toBeAddedProfile);
+        goalRepository.save(toBePatchedGoal);
     }
 }

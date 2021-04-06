@@ -1,9 +1,6 @@
 package com.example.mefitapp.services;
 
-import com.example.mefitapp.models.Goal;
-import com.example.mefitapp.models.Profile;
-import com.example.mefitapp.models.Program;
-import com.example.mefitapp.models.Workout;
+import com.example.mefitapp.models.*;
 import com.example.mefitapp.repositories.GoalRepository;
 import com.example.mefitapp.repositories.ProfileRepository;
 import com.example.mefitapp.repositories.ProgramRepository;
@@ -40,5 +37,34 @@ public class ProgramService {
     public List<Goal> getGoalsByProgram(Long id) {
         Program returnProgram = programRepository.findById(id).get();
         return goalRepository.findAllByPrograms(returnProgram);
+    }
+
+    public void updateList(Object listName, Long workoutId, String itemId) {
+        switch (listName.toString()) {
+            case "goals" -> updateGoals(workoutId, Long.valueOf(itemId));
+            case "workouts" -> updateWorkouts(workoutId, Long.valueOf(itemId));
+            case "profiles" -> updateProfiles(workoutId, itemId);
+        }
+    }
+
+    public void updateGoals(Long programId, Long goalId) {
+        Program toBePatchedProgram = programRepository.findById(programId).get();
+        Goal toBeAddedGoal = goalRepository.findById(goalId).get();
+        toBePatchedProgram.getGoals().add(toBeAddedGoal);
+        programRepository.save(toBePatchedProgram);
+    }
+
+    public void updateWorkouts(Long programId, Long workoutId) {
+        Program toBePatchedProgram = programRepository.findById(programId).get();
+        Workout toBeAddedWorkout = workoutRepository.findById(workoutId).get();
+        toBePatchedProgram.getWorkouts().add(toBeAddedWorkout);
+        programRepository.save(toBePatchedProgram);
+    }
+
+    public void updateProfiles(Long programId, String profileId) {
+        Program toBePatchedProgram = programRepository.findById(programId).get();
+        Profile toBeAddedProfile = profileRepository.findById(profileId).get();
+        toBePatchedProgram.getProfiles().add(toBeAddedProfile);
+        programRepository.save(toBePatchedProgram);
     }
 }

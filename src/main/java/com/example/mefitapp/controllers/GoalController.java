@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.lang.reflect.Field;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -125,8 +126,18 @@ public class GoalController {
                 updates.forEach((k, v) -> {
                     // use reflection to get field k on exercise and set it to value v
                     Field field = ReflectionUtils.findField(Goal.class, k);
-                    field.setAccessible(true);
-                    ReflectionUtils.setField(field, toBePatchedGoal, v);
+                    if (v instanceof ArrayList) {
+                        ((ArrayList<?>) v).forEach((item) -> {
+                            if (item instanceof LinkedHashMap) {
+                                ((LinkedHashMap) item).forEach((itemKey, itemValue) -> {
+                                    goalService.updateList(k, id, itemValue.toString());
+                                });
+                            }
+                        });
+                    } else {
+                        field.setAccessible(true);
+                        ReflectionUtils.setField(field, toBePatchedGoal, v);
+                    }
                 });
                 goalRepository.save(toBePatchedGoal);
                 returnGoal = toBePatchedGoal;

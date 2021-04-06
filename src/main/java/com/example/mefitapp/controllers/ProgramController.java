@@ -6,14 +6,17 @@ import com.example.mefitapp.models.Program;
 import com.example.mefitapp.models.Workout;
 import com.example.mefitapp.repositories.ProgramRepository;
 import com.example.mefitapp.services.ProgramService;
+import com.example.mefitapp.services.SecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +30,9 @@ public class ProgramController {
 
     @Autowired
     private ProgramService programService;
+
+    @Autowired
+    private SecurityService securityService;
 
     @GetMapping()
     public ResponseEntity<List<Program>> getAllPrograms() {
@@ -91,14 +97,20 @@ public class ProgramController {
     }
 
     @PostMapping
-    public ResponseEntity<Program> addProgram(@RequestBody Program program) {
-        Program returnProgram = programRepository.save(program);
-        HttpStatus status = HttpStatus.CREATED;
-        return new ResponseEntity<>(returnProgram, status);
+    public ResponseEntity<Program> addProgram(@RequestBody Program program, Authentication authentication) {
+        if (securityService.isContributor(authentication) || securityService.isAdmin(authentication)) {
+            Program returnProgram = programRepository.save(program);
+            HttpStatus status = HttpStatus.CREATED;
+            return new ResponseEntity<>(returnProgram, status);
+        } else {
+            HttpStatus status = HttpStatus.UNAUTHORIZED;
+            return new ResponseEntity<>(status);
+        }
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Program> updateProgram(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
+    public ResponseEntity<Program> updateProgram(@PathVariable Long id,
+            @RequestBody Map<String, Object> updates, Authentication authentication) {
         Program returnProgram = new Program();
         HttpStatus status;
         if (programRepository.existsById(id)) {
@@ -108,8 +120,18 @@ public class ProgramController {
             updates.forEach((k, v) -> {
                 // use reflection to get field k on exercise and set it to value v
                 Field field = ReflectionUtils.findField(Program.class, k);
-                field.setAccessible(true);
-                ReflectionUtils.setField(field, toBePatchedProgram, v);
+                if (v instanceof ArrayList) {
+                    ((ArrayList<?>) v).forEach((item) -> {
+                        if (item instanceof LinkedHashMap) {
+                            ((LinkedHashMap) item).forEach((itemKey, itemValue) -> {
+                                programService.updateList(k, id, itemValue.toString());
+                            });
+                        }
+                    });
+                } else {
+                    field.setAccessible(true);
+                    ReflectionUtils.setField(field, toBePatchedProgram, v);
+                }
             });
             programRepository.save(toBePatchedProgram);
             returnProgram = toBePatchedProgram;

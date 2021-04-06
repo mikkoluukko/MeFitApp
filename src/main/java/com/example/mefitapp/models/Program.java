@@ -117,4 +117,12 @@ public class Program {
     public void setProfiles(List<Profile> profiles) {
         this.profiles = profiles;
     }
+
+    public List<Goal> getGoals() {
+        return goals;
+    }
+
+    public void setGoals(List<Goal> goals) {
+        this.goals = goals;
+    }
 }

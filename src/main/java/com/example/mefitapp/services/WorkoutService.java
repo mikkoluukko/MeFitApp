@@ -53,7 +53,6 @@ public class WorkoutService {
         }
     }
 
-
     public void updateExerciseSets(Long workoutId, Long exerciseSetId) {
         Workout toBePatchedWorkout = workoutRepository.findById(workoutId).get();
         ExerciseSet toBeAddedExerciseSet = exerciseSetRepository.findById(exerciseSetId).get();

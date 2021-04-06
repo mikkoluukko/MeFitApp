@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.lang.reflect.Field;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -146,8 +147,18 @@ public class ProfileController {
                 updates.forEach((k, v) -> {
                     // use reflection to get field k on exercise and set it to value v
                     Field field = ReflectionUtils.findField(Profile.class, k);
-                    field.setAccessible(true);
-                    ReflectionUtils.setField(field, toBePatchedProfile, v);
+                    if (v instanceof ArrayList) {
+                        ((ArrayList<?>) v).forEach((item) -> {
+                            if (item instanceof LinkedHashMap) {
+                                ((LinkedHashMap) item).forEach((itemKey, itemValue) -> {
+                                    profileService.updateList(k, id, itemValue.toString());
+                                });
+                            }
+                        });
+                    } else {
+                        field.setAccessible(true);
+                        ReflectionUtils.setField(field, toBePatchedProfile, v);
+                    }
                 });
                 profileRepository.save(toBePatchedProfile);
                 returnProfile = toBePatchedProfile;

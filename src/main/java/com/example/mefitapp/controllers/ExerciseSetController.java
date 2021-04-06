@@ -96,14 +96,12 @@ public class ExerciseSetController {
                 updates.forEach((k, v) -> {
                     // use reflection to get field k on exercise and set it to value v
                     Field field = ReflectionUtils.findField(ExerciseSet.class, k);
-                    System.out.println(field.getName());
-                    System.out.println(v.getClass());
                     if (v instanceof ArrayList) {
                         ((ArrayList<?>) v).forEach((item) -> {
                             if (item instanceof LinkedHashMap) {
                                 ((LinkedHashMap) item).forEach((k2, v2) -> {
-                                    System.out.println(v2);
-                                    workoutRepository.findById(Long.valueOf(String.valueOf(v2))).get().getExerciseSets().add(toBePatchedExerciseSet);
+                                    toBePatchedExerciseSet.getWorkouts().add(workoutRepository
+                                            .findById(Long.valueOf(String.valueOf(v2))).get());
                                 });
                             }
                         });

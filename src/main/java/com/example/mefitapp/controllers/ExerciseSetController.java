@@ -3,6 +3,7 @@ package com.example.mefitapp.controllers;
 import com.example.mefitapp.models.ExerciseSet;
 import com.example.mefitapp.models.Workout;
 import com.example.mefitapp.repositories.ExerciseSetRepository;
+import com.example.mefitapp.repositories.WorkoutRepository;
 import com.example.mefitapp.services.ExerciseSetService;
 import com.example.mefitapp.services.SecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +32,9 @@ public class ExerciseSetController {
 
     @Autowired
     private SecurityService securityService;
+
+    @Autowired
+    private WorkoutRepository workoutRepository;
 
     @GetMapping()
     public ResponseEntity<List<ExerciseSet>> getAllExerciseSets() {
@@ -92,9 +97,20 @@ public class ExerciseSetController {
                     // use reflection to get field k on exercise and set it to value v
                     Field field = ReflectionUtils.findField(ExerciseSet.class, k);
                     System.out.println(field.getName());
-                    System.out.println(k);
-                    field.setAccessible(true);
-                    ReflectionUtils.setField(field, toBePatchedExerciseSet, v);
+                    System.out.println(v.getClass());
+                    if (v instanceof ArrayList) {
+                        ((ArrayList<?>) v).forEach((item) -> {
+                            if (item instanceof LinkedHashMap) {
+                                ((LinkedHashMap) item).forEach((k2, v2) -> {
+                                    System.out.println(v2);
+                                    workoutRepository.findById(Long.valueOf(String.valueOf(v2))).get().getExerciseSets().add(toBePatchedExerciseSet);
+                                });
+                            }
+                        });
+                    } else {
+                        field.setAccessible(true);
+                        ReflectionUtils.setField(field, toBePatchedExerciseSet, v);
+                    }
                 });
                 exerciseSetRepository.save(toBePatchedExerciseSet);
                 returnExerciseSet = toBePatchedExerciseSet;

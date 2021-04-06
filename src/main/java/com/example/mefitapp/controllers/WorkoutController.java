@@ -1,6 +1,7 @@
 package com.example.mefitapp.controllers;
 
 import com.example.mefitapp.models.*;
+import com.example.mefitapp.repositories.ExerciseSetRepository;
 import com.example.mefitapp.repositories.WorkoutRepository;
 import com.example.mefitapp.services.WorkoutService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +26,9 @@ public class WorkoutController {
 
     @Autowired
     private WorkoutService workoutService;
+
+    @Autowired
+    private ExerciseSetRepository exerciseSetRepository;
 
     @GetMapping()
     public ResponseEntity<List<Workout>> getAllWorkouts() {
@@ -119,8 +124,21 @@ public class WorkoutController {
             updates.forEach((k, v) -> {
                 // use reflection to get field k on exercise and set it to value v
                 Field field = ReflectionUtils.findField(Workout.class, k);
-                field.setAccessible(true);
-                ReflectionUtils.setField(field, toBePatchedWorkout, v);
+                System.out.println(field.getName());
+                System.out.println(v.getClass());
+                if (v instanceof ArrayList) {
+                    ((ArrayList<?>) v).forEach((item) -> {
+                        if (item instanceof LinkedHashMap) {
+                            ((LinkedHashMap) item).forEach((k2, v2) -> {
+                                System.out.println(v2);
+                                exerciseSetRepository.findById(Long.valueOf(String.valueOf(v2))).get().getWorkouts().add(toBePatchedWorkout);
+                            });
+                        }
+                    });
+                } else {
+                    field.setAccessible(true);
+                    ReflectionUtils.setField(field, toBePatchedWorkout, v);
+                }
             });
             workoutRepository.save(toBePatchedWorkout);
             returnWorkout = toBePatchedWorkout;

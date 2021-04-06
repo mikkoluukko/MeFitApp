@@ -78,4 +78,12 @@ public class ExerciseSet {
     public void setExercise(Exercise exercise) {
         this.exercise = exercise;
     }
+
+    public List<Workout> getWorkouts() {
+        return workouts;
+    }
+
+    public void setWorkouts(List<Workout> workouts) {
+        this.workouts = workouts;
+    }
 }

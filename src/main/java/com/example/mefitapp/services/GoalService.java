@@ -27,11 +27,6 @@ public class GoalService {
         return workoutRepository.findAllByGoals(returnGoal);
     }
 
-    public List<Profile> getProfilesByGoal(Long id) {
-        Goal returnGoal = goalRepository.findById(id).get();
-        return profileRepository.findAllByGoals(returnGoal);
-    }
-
     public List<Program> getProgramsByGoal(Long id) {
         Goal returnGoal = goalRepository.findById(id).get();
         return programRepository.findAllByGoals(returnGoal);

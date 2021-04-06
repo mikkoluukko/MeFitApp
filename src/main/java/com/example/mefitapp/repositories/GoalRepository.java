@@ -9,6 +9,6 @@ import java.util.List;
 @Repository
 public interface GoalRepository extends JpaRepository<Goal, Long> {
     List<Goal> findAllByWorkouts(Workout workout);
-    List<Goal> findAllByProfiles(Profile profile);
+    List<Goal> findAllByProfile(Profile profile);
     List<Goal> findAllByPrograms(Program program);
 }

@@ -39,6 +39,6 @@ public class ProfileService {
 
     public List<Goal> getGoalsByProfile(String id) {
         Profile returnProfile = profileRepository.findById(id).get();
-        return goalRepository.findAllByProfiles(returnProfile);
+        return goalRepository.findAllByProfile(returnProfile);
     }
 }

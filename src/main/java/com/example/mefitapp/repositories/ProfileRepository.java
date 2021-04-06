@@ -13,5 +13,4 @@ import java.util.List;
 public interface ProfileRepository extends JpaRepository<Profile, String> {
     List<Profile> findAllByWorkouts(Workout workout);
     List<Profile> findAllByPrograms(Program program);
-    List<Profile> findAllByGoals(Goal goal);
 }

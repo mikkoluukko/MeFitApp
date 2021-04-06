@@ -1,8 +1,10 @@
 package com.example.mefitapp.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonGetter;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -14,8 +16,12 @@ public class Goal {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+//    @Column(nullable = false)
+//    private Date end_date;
+
     @Column(nullable = false)
-    private Date end_date;
+    @JsonFormat(pattern="dd-MM-yyyy")
+    private LocalDate end_date;
 
     @Column(columnDefinition = "boolean default false")
     private Boolean is_achieved;
@@ -81,11 +87,11 @@ public class Goal {
         this.id = id;
     }
 
-    public Date getEnd_date() {
+    public LocalDate getEnd_date() {
         return end_date;
     }
 
-    public void setEnd_date(Date end_date) {
+    public void setEnd_date(LocalDate end_date) {
         this.end_date = end_date;
     }
 

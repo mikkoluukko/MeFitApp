@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 // Use ExerciseSet instead of Set as Set is a reserved word
@@ -34,7 +35,7 @@ public class ExerciseSet {
             joinColumns = {@JoinColumn(name = "workout_id")},
             inverseJoinColumns = {@JoinColumn(name = "exercise_set_id")}
     )
-    private List<Workout> workouts;
+    private Set<Workout> workouts;
 
     @JsonGetter("workouts")
     public List<String> workoutsGetter() {
@@ -79,11 +80,11 @@ public class ExerciseSet {
         this.exercise = exercise;
     }
 
-    public List<Workout> getWorkouts() {
+    public Set<Workout> getWorkouts() {
         return workouts;
     }
 
-    public void setWorkouts(List<Workout> workouts) {
+    public void setWorkouts(Set<Workout> workouts) {
         this.workouts = workouts;
     }
 }

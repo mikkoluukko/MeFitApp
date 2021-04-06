@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
@@ -27,7 +28,7 @@ public class Workout {
             joinColumns = {@JoinColumn(name = "exercise_set_id")},
             inverseJoinColumns = {@JoinColumn(name = "workout_id")}
     )
-    private List<ExerciseSet> exerciseSets;
+    private Set<ExerciseSet> exerciseSets;
 
     @JsonGetter("exerciseSets")
     public List<String> exerciseSetsGetter() {
@@ -46,7 +47,7 @@ public class Workout {
             joinColumns = {@JoinColumn(name = "profile_id")},
             inverseJoinColumns = {@JoinColumn(name = "workout_id")}
     )
-    private List<Profile> profiles;
+    private Set<Profile> profiles;
 
     @JsonGetter("profiles")
     public List<String> profilesGetter() {
@@ -65,7 +66,7 @@ public class Workout {
             joinColumns = {@JoinColumn(name = "program_id")},
             inverseJoinColumns = {@JoinColumn(name = "workout_id")}
     )
-    private List<Program> programs;
+    private Set<Program> programs;
 
     @JsonGetter("programs")
     public List<String> programsGetter() {
@@ -84,7 +85,7 @@ public class Workout {
             joinColumns = {@JoinColumn(name = "goal_id")},
             inverseJoinColumns = {@JoinColumn(name = "workout_id")}
     )
-    private List<Goal> goals;
+    private Set<Goal> goals;
 
     @JsonGetter("goals")
     public List<String> goalsGetter() {
@@ -132,35 +133,35 @@ public class Workout {
         this.is_complete = is_complete;
     }
 
-    public List<ExerciseSet> getExerciseSets() {
+    public Set<ExerciseSet> getExerciseSets() {
         return exerciseSets;
     }
 
-    public void setExerciseSets(List<ExerciseSet> exerciseSets) {
+    public void setExerciseSets(Set<ExerciseSet> exerciseSets) {
         this.exerciseSets = exerciseSets;
     }
 
-    public List<Profile> getProfiles() {
+    public Set<Profile> getProfiles() {
         return profiles;
     }
 
-    public void setProfiles(List<Profile> profiles) {
+    public void setProfiles(Set<Profile> profiles) {
         this.profiles = profiles;
     }
 
-    public List<Program> getPrograms() {
+    public Set<Program> getPrograms() {
         return programs;
     }
 
-    public void setPrograms(List<Program> programs) {
+    public void setPrograms(Set<Program> programs) {
         this.programs = programs;
     }
 
-    public List<Goal> getGoals() {
+    public Set<Goal> getGoals() {
         return goals;
     }
 
-    public void setGoals(List<Goal> goals) {
+    public void setGoals(Set<Goal> goals) {
         this.goals = goals;
     }
 }

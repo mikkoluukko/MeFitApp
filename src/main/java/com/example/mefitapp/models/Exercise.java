@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
@@ -29,7 +30,7 @@ public class Exercise {
 
     @OneToMany
     @JoinColumn(name = "exercise_id")
-    private List<ExerciseSet> exerciseSets;
+    private Set<ExerciseSet> exerciseSets;
 
     @JsonGetter("exerciseSets")
     public List<String> exerciseSetsGetter() {
@@ -97,11 +98,11 @@ public class Exercise {
         this.vid_link = vid_link;
     }
 
-    public List<ExerciseSet> getExerciseSets() {
+    public Set<ExerciseSet> getExerciseSets() {
         return exerciseSets;
     }
 
-    public void setExerciseSets(List<ExerciseSet> exerciseSets) {
+    public void setExerciseSets(Set<ExerciseSet> exerciseSets) {
         this.exerciseSets = exerciseSets;
     }
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
@@ -66,7 +67,7 @@ public class Profile {
 
     @OneToMany
     @JoinColumn(name = "goal_id")
-    private List<Goal> goals;
+    private Set<Goal> goals;
 
     @JsonGetter("goals")
     public List<String> goalsGetter() {
@@ -146,11 +147,11 @@ public class Profile {
         this.programs = programs;
     }
 
-    public List<Goal> getGoals() {
+    public Set<Goal> getGoals() {
         return goals;
     }
 
-    public void setGoals(List<Goal> goals) {
+    public void setGoals(Set<Goal> goals) {
         this.goals = goals;
     }
 }

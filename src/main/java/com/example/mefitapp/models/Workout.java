@@ -139,4 +139,28 @@ public class Workout {
     public void setExerciseSets(List<ExerciseSet> exerciseSets) {
         this.exerciseSets = exerciseSets;
     }
+
+    public List<Profile> getProfiles() {
+        return profiles;
+    }
+
+    public void setProfiles(List<Profile> profiles) {
+        this.profiles = profiles;
+    }
+
+    public List<Program> getPrograms() {
+        return programs;
+    }
+
+    public void setPrograms(List<Program> programs) {
+        this.programs = programs;
+    }
+
+    public List<Goal> getGoals() {
+        return goals;
+    }
+
+    public void setGoals(List<Goal> goals) {
+        this.goals = goals;
+    }
 }

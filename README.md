@@ -34,4 +34,8 @@ Link to [API documentation](https://documenter.getpostman.com/view/14576152/TzCT
   access all the goals.
   
 ## Getting Started
+The application requires a separate Keycloak server. Instruction for setting up a Keycloak server
+can be found [here](https://www.keycloak.org/). In the Keycloak server you will need to set up
+a realm with the name "mefitapp" and add user roles "User", "Contributor" and "Admin".
 
+After Keycloak server is available just clone, build and run this repository.

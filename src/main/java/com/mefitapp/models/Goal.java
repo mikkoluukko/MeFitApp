@@ -15,9 +15,6 @@ public class Goal {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-//    @Column(nullable = false)
-//    private Date end_date;
-
     @Column(nullable = false)
     @JsonFormat(pattern="dd-MM-yyyy")
     private LocalDate end_date;

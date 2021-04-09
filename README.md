@@ -38,9 +38,9 @@ the backend for it.
 Database diagram:  
 ![database_diagram](https://github.com/mikkoluukko/MeFitApp/blob/master/readme-images/database_diagram.png)  
 
-Link to [API documentation](https://documenter.getpostman.com/view/14576152/TzCTZkVH)
-Link to [Frontend repository](https://github.com/paularintaharri/MefitApp-frontend)
-Link to [live application deployed to Heroku](https://mefit-app.herokuapp.com/)
+Link to [API documentation](https://documenter.getpostman.com/view/14576152/TzCTZkVH)  
+Link to [Frontend repository](https://github.com/paularintaharri/MefitApp-frontend)  
+Link to [live application deployed to Heroku](https://mefit-app.herokuapp.com/)  
 
 ## Getting Started
 The application requires a separate Keycloak server. Instruction for setting up a Keycloak server

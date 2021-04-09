@@ -4,16 +4,15 @@
 - [About](#about)
     - [Team Members](#team-members)
 - [Techinal Description](#technical-description)
+- [Links and Documentation](#links-and-documentation)
 - [Getting Started](#getting-started)
 
 
 ## About
 
 MeFitApp is a web application for managing weekly workout goals. This repository contains
-the backend for it. 
+the backend for it.
 
-Link to [Frontend repository](https://github.com/paularintaharri/MefitApp-frontend)  
-Link to [API documentation](https://documenter.getpostman.com/view/14576152/TzCTZkVH)
 
 ### Team Members
 
@@ -29,10 +28,20 @@ Link to [API documentation](https://documenter.getpostman.com/view/14576152/TzCT
   implemented using Spring Data JPA and protected with Spring Security.
 - It uses OAuth2 authorization implemented with a separate Keycloak server.
 - Resources are protected by both role based and user ID based access rights. For example,
-  a normal user can only access goals created by themself (in other words where the goal's
+  a normal user can only access goals created by themselves (in other words where the goal's
   profile ID value matches the user's profile ID value). A user with an admin role can however
   access all the goals.
-  
+
+
+## Links and Documentation
+
+Database diagram:  
+![database-diagram](https://github.com/mikkoluukko/MeFitApp/blob/master/readme-images/database-diagram.png)  
+
+Link to [API documentation](https://documenter.getpostman.com/view/14576152/TzCTZkVH)
+Link to [Frontend repository](https://github.com/paularintaharri/MefitApp-frontend)
+Link to [live application deployed to Heroku](https://mefit-app.herokuapp.com/)
+
 ## Getting Started
 The application requires a separate Keycloak server. Instruction for setting up a Keycloak server
 can be found [here](https://www.keycloak.org/). In the Keycloak server you will need to set up

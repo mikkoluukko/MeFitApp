@@ -36,7 +36,7 @@ the backend for it.
 ## Links and Documentation
 
 Database diagram:  
-![database-diagram](https://github.com/mikkoluukko/MeFitApp/blob/master/readme-images/database-diagram.png)  
+![database_diagram](https://github.com/mikkoluukko/MeFitApp/blob/master/readme-images/database_diagram.png)  
 
 Link to [API documentation](https://documenter.getpostman.com/view/14576152/TzCTZkVH)
 Link to [Frontend repository](https://github.com/paularintaharri/MefitApp-frontend)
